@@ -6,7 +6,7 @@ import numpy as np
 import pygame
 import sys
 import warnings
-
+import time
 
 def speedx(snd_array, factor):
     """ Speeds up / slows down a sound, by some factor. """
@@ -83,13 +83,17 @@ def main():
     if not args.verbose:
         warnings.simplefilter('ignore')
 
-    fps, sound = wavfile.read(args.wav.name)
+    musicList = ["A2.wav", "Ds4.wav", "A4.wav", "A5.wav"]
+    soundList = []
+    for music in musicList:
+      fps, sound = wavfile.read("/Users/kathleenruan/Documents/tartanhacks/temp/guitar-electric/"+music)
+      soundList.append(sound)
 
-    tones = range(-25, 25)
-    sys.stdout.write('Transponding sound file... ')
-    sys.stdout.flush()
-    transposed_sounds = [pitchshift(sound, n) for n in tones]
-    print('DONE')
+    #tones = range(-25, 25)
+    #sys.stdout.write('Transponding sound file... ')
+    #sys.stdout.flush()
+    #transposed_sounds = [pitchshift(sound, n) for n in tones]
+    #print('DONE')
 
     # So flexible ;)
     pygame.mixer.init(fps, -16, 1, 2048)
@@ -97,31 +101,31 @@ def main():
     screen = pygame.display.set_mode((150, 150))
 
     keys = args.keyboard.read().split('\n')
-    sounds = map(pygame.sndarray.make_sound, transposed_sounds)
+    sounds = map(pygame.sndarray.make_sound, soundList)
     key_sound = dict(zip(keys, sounds))
     is_playing = {k: False for k in keys}
 
     while True:
         event = pygame.event.wait()
-
         if event.type in (pygame.KEYDOWN, pygame.KEYUP):
             key = pygame.key.name(event.key)
+        if (event.type == pygame.KEYDOWN and key == "a"):
+            #if (key in key_sound.keys()) and (not is_playing[key]):
+            i = 0
+            while True:
+               print(i)
+               i+=1
+               sounds[0].play(fade_ms=10)
+               time.sleep(0.2)
+               sounds[1].play(fade_ms=10)
+               time.sleep(0.2)  
+ 
+        if (event.type == pygame.KEYDOWN and key == "d"):
+            #if (key in key_sound.keys()) and (not is_playing[key]):
+            sounds[1].play(fade_ms=200)
 
-        if event.type == pygame.KEYDOWN:
-            if (key in key_sound.keys()) and (not is_playing[key]):
-                key_sound[key].play(fade_ms=50)
-                is_playing[key] = True
 
-            """
-            elif event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                raise KeyboardInterrupt
-            """
-        elif event.type == pygame.KEYUP and key in key_sound.keys():
-            # Stops with 50ms fadeout
-            key_sound[key].fadeout(500)
-            is_playing[key] = False
-
+      
 
 if __name__ == '__main__':
     try:
