@@ -116,9 +116,9 @@ def main():
                print(i)
                i+=1
                sounds[0].play(fade_ms=10)
-               time.sleep(2)
+               time.sleep(.1)
                sounds[1].play(fade_ms=10)
-               time.sleep(2)  
+               time.sleep(.1)  
  
         if (event.type == pygame.KEYDOWN and key == "d"):
             #if (key in key_sound.keys()) and (not is_playing[key]):
